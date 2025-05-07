@@ -1,1 +1,20 @@
-pip freeze > requirements.txt
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+tensorflow
+keras
+torch
+flask
+django
+requests
+beautifulsoup4
+scipy
+nltk
+opencv-python
+pillow
+xgboost
+lightgbm
+pytest
+jupyter
