@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rice Classification App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7C83FD;
+            --secondary: #96BAFF;
+            --light: #F8F9FA;
+            --dark: #343a40;
+            --success: #52b788;
+            --warning: #ffb703;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .container:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            color: var(--dark);
+            font-weight: 700;
+        }
+        
+        .app-logo {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(124, 131, 253, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6970e4;
+            border-color: #6970e4;
+            transform: translateY(-2px);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .input-group:hover {
+            transform: translateY(-2px);
+        }
+        
+        .input-group-text {
+            background-color: var(--light);
+            border-radius: 8px 0 0 8px;
+            border: 1px solid #ced4da;
+            border-right: none;
+        }
+        
+        .input-with-icon .form-control {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .result-card {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+        }
+        
+        .list-group-item {
+            padding: 15px 20px;
+            border-left: none;
+            border-right: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        
+        .prediction-badge {
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+        
+        .badge-cammeo {
+            background-color: #ffedd1;
+            color: #d4a056;
+        }
+        
+        .badge-osmancik {
+            background-color: #d8f3dc;
+            color: #52b788;
+        }
+        
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .form-title {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .rice-types {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .rice-type {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .rice-cammeo {
+            background-color: #ffedd1;
+            color: #d4a056;
+        }
+        
+        .rice-osmancik {
+            background-color: #d8f3dc;
+            color: #52b788;
+        }
+        
+        .loading {
+            display: none;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            .rice-types {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container animate__animated animate__fadeIn">
+        <div class="text-center">
+            <div class="app-logo">🍚</div>
+            <h1 class="display-5">Rice Classification</h1>
+            <p class="subtitle">Advanced grain analysis technology to classify rice varieties</p>
+        </div>
+        
+        <div class="rice-types animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="rice-type rice-cammeo">
+                <i class="fas fa-seedling mb-2"></i>
+                <div>Cammeo</div>
+            </div>
+            <div class="rice-type rice-osmancik">
+                <i class="fas fa-leaf mb-2"></i>
+                <div>Osmancik</div>
+            </div>
+        </div>
+        
+        <form method="post" id="predictionForm">
+            <div class="form-section animate__animated animate__fadeInUp animate__delay-2s">
+                <h3 class="form-title"><i class="fas fa-ruler"></i> Dimension Metrics</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-vector-square"></i></span>
+                            <input type="number" step="any" class="form-control" name="area" placeholder="Area" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-draw-polygon"></i></span>
+                            <input type="number" step="any" class="form-control" name="perimeter" placeholder="Perimeter" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-arrows-alt-h"></i></span>
+                            <input type="number" step="any" class="form-control" name="major_axis" placeholder="Major Axis Length" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-arrows-alt-v"></i></span>
+                            <input type="number" step="any" class="form-control" name="minor_axis" placeholder="Minor Axis Length" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section animate__animated animate__fadeInUp animate__delay-3s">
+                <h3 class="form-title"><i class="fas fa-chart-pie"></i> Shape Features</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-circle-notch"></i></span>
+                            <input type="number" step="any" class="form-control" name="eccentricity" placeholder="Eccentricity" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-expand-arrows-alt"></i></span>
+                            <input type="number" step="any" class="form-control" name="convex_area" placeholder="Convex Area" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mx-auto">
+                        <div class="input-group input-with-icon">
+                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                            <input type="number" step="any" class="form-control" name="extent" placeholder="Extent" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-center animate__animated animate__fadeInUp animate__delay-4s">
+                <button type="submit" id="predictBtn" class="btn btn-primary px-5 py-3">
+                    <i class="fas fa-robot me-2"></i>Predict Classification
+                </button>
+            </div>
+        </form>
+        
+        <div class="loading" id="loadingSpinner">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        {% if predictions %}
+        <div class="result-card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-2"></i>Prediction Results
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if predictions.error %}
+                <li class="list-group-item text-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ predictions.error }}
+                </li>
+                {% else %}
+                <li class="list-group-item">
+                    <span><i class="fas fa-brain me-2"></i>Naive Bayes</span>
+                    <span class="prediction-badge {% if predictions.nb == 'Cammeo' %}badge-cammeo{% else %}badge-osmancik{% endif %}">
+                        {{ predictions.nb }}
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <span><i class="fas fa-project-diagram me-2"></i>KNN</span>
+                    <span class="prediction-badge {% if predictions.knn == 'Cammeo' %}badge-cammeo{% else %}badge-osmancik{% endif %}">
+                        {{ predictions.knn }}
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <span><i class="fas fa-calculator me-2"></i>Logistic Regression</span>
+                    <span class="prediction-badge {% if predictions.lr == 'Cammeo' %}badge-cammeo{% else %}badge-osmancik{% endif %}">
+                        {{ predictions.lr }}
+                    </span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Input focus effect
+            $('.form-control').on('focus', function() {
+                $(this).parent('.input-group').addClass('shadow-sm');
+            }).on('blur', function() {
+                $(this).parent('.input-group').removeClass('shadow-sm');
+            });
+            
+            // Form submission animation
+            $('#predictionForm').on('submit', function() {
+                $('#predictBtn').prop('disabled', true);
+                $('#predictBtn').html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...');
+                $('#loadingSpinner').css('display', 'flex');
+                
+                // This is just for demo since we can't intercept the actual form submission
+                // In a real app, you would handle the AJAX submission here
+                setTimeout(function() {
+                    // This code won't actually run in your app, it's just for demonstration
+                    $('#loadingSpinner').hide();
+                }, 1000);
+                
+                return true;
+            });
+            
+            // Animated number inputs
+            $('input[type="number"]').on('input', function() {
+                if ($(this).val() !== '') {
+                    $(this).addClass('animate__animated animate__pulse');
+                    setTimeout(() => {
+                        $(this).removeClass('animate__animated animate__pulse');
+                    }, 500);
+                }
+            });
+            
+            // Hover effects for rice types
+            $('.rice-type').hover(
+                function() {
+                    $(this).addClass('animate__animated animate__pulse');
+                },
+                function() {
+                    $(this).removeClass('animate__animated animate__pulse');
+                }
+            );
+        });
+    </script>
+</body>
+</html>
